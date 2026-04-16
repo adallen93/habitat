@@ -1,0 +1,121 @@
+import { useState, useEffect } from 'react';
+import type { HabitId, DayRecord } from '../../types';
+import { HABITS_BY_CATEGORY } from '../../constants/habits';
+import { todayString, formatDisplayDate } from '../../lib/dateUtils';
+import { HabitGroup } from './HabitGroup';
+import { ScorePreview } from './ScorePreview';
+
+interface Props {
+  getRecord: (date: string) => DayRecord | null;
+  saveRecord: (date: string, completed: HabitId[]) => DayRecord;
+  initialDate?: string;
+}
+
+const GROUPS = [
+  { key: 'morning' as const, label: 'Morning', accentClass: 'bg-sky-50', labelClass: 'text-sky-700' },
+  { key: 'evening' as const, label: 'Evening', accentClass: 'bg-violet-50', labelClass: 'text-violet-700' },
+  { key: 'other' as const, label: 'Other Priority', accentClass: 'bg-teal-50', labelClass: 'text-teal-700' },
+  { key: 'none' as const, label: 'General', accentClass: 'bg-stone-50', labelClass: 'text-stone-500' },
+];
+
+export function CheckInTab({ getRecord, saveRecord, initialDate }: Props) {
+  const [selectedDate, setSelectedDate] = useState(initialDate ?? todayString());
+  const [checked, setChecked] = useState<Set<HabitId>>(new Set());
+  const [toast, setToast] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  // Load existing record when date changes
+  useEffect(() => {
+    const record = getRecord(selectedDate);
+    setChecked(new Set((record?.completed ?? []) as HabitId[]));
+    setSaved(!!record);
+  }, [selectedDate, getRecord]);
+
+  function toggle(id: HabitId) {
+    setChecked(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function handleSave() {
+    const record = saveRecord(selectedDate, Array.from(checked) as HabitId[]);
+    setSaved(true);
+    const msg = `Saved! ${record.rating} — ${record.effectiveScore}/16`;
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  }
+
+  const isToday = selectedDate === todayString();
+
+  return (
+    <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+      {/* Date picker */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1">
+          <label className="block text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1.5">
+            Date
+          </label>
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={e => setSelectedDate(e.target.value)}
+              className="bg-white border border-stone-200 rounded-xl px-3 py-2 text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+            />
+            <span className="text-sm text-stone-400">{formatDisplayDate(selectedDate)}</span>
+            {!isToday && (
+              <button
+                onClick={() => setSelectedDate(todayString())}
+                className="text-xs text-amber-600 hover:text-amber-700 font-medium"
+              >
+                → Today
+              </button>
+            )}
+          </div>
+        </div>
+        {saved && (
+          <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Saved
+          </div>
+        )}
+      </div>
+
+      {/* Score preview */}
+      <ScorePreview checked={checked} />
+
+      {/* Habit groups */}
+      {GROUPS.map(g => (
+        <HabitGroup
+          key={g.key}
+          label={g.label}
+          habits={HABITS_BY_CATEGORY[g.key]}
+          checked={checked}
+          onToggle={toggle}
+          accentClass={g.accentClass}
+          labelClass={g.labelClass}
+        />
+      ))}
+
+      {/* Save button */}
+      <button
+        onClick={handleSave}
+        className="w-full bg-amber-400 hover:bg-amber-500 text-stone-900 font-semibold py-3.5 px-6 rounded-2xl transition-colors text-base shadow-sm"
+      >
+        {saved ? 'Update Day' : 'Save Day'}
+      </button>
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-stone-800 text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-lg z-50 animate-fade-in">
+          {toast}
+        </div>
+      )}
+    </div>
+  );
+}
