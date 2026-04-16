@@ -9,14 +9,14 @@ interface Props {
 
 const DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
-function getRatingBg(record: DayRecord | undefined, date: string): string {
-  if (isFuture(date)) return 'opacity-30 cursor-default';
-  if (!record) return 'bg-stone-100 text-stone-400 hover:bg-stone-200';
+function getCellClass(record: DayRecord | undefined, date: string): string {
+  if (isFuture(date)) return 'bg-stone-800 text-stone-700 cursor-default';
+  if (!record) return 'bg-stone-800 text-stone-500 hover:bg-stone-700 cursor-pointer';
   switch (record.rating) {
-    case 'Miss': return 'bg-rose-200 text-rose-700 hover:bg-rose-300 cursor-pointer';
-    case 'Accomplished': return 'bg-amber-200 text-amber-700 hover:bg-amber-300 cursor-pointer';
-    case 'Well Done': return 'bg-emerald-200 text-emerald-700 hover:bg-emerald-300 cursor-pointer';
-    case 'Above and Beyond': return 'bg-emerald-500 text-white hover:bg-emerald-600 cursor-pointer';
+    case 'Miss': return 'bg-rose-950 text-rose-400 hover:bg-rose-900 cursor-pointer';
+    case 'Accomplished': return 'bg-amber-950 text-amber-400 hover:bg-amber-900 cursor-pointer';
+    case 'Well Done': return 'bg-emerald-950 text-emerald-400 hover:bg-emerald-900 cursor-pointer';
+    case 'Above and Beyond': return 'bg-emerald-500 text-stone-900 hover:bg-emerald-400 cursor-pointer font-bold';
   }
 }
 
@@ -39,19 +39,19 @@ export function CalendarHeatmap({ records, onDateClick }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200 p-4">
+    <div className="bg-stone-900 rounded-2xl border border-stone-700 p-4">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-xs font-semibold uppercase tracking-widest text-stone-400">Calendar</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-stone-500">Calendar</p>
         <div className="flex items-center gap-2">
-          <button onClick={prev} className="p-1 rounded-lg hover:bg-stone-100 text-stone-500 transition-colors">
+          <button onClick={prev} className="p-1 rounded-lg hover:bg-stone-800 text-stone-500 hover:text-stone-300 transition-colors">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <span className="text-sm font-medium text-stone-700 min-w-[120px] text-center">
+          <span className="text-sm font-medium text-stone-300 min-w-[120px] text-center">
             {formatMonthYear(year, month)}
           </span>
-          <button onClick={next} className="p-1 rounded-lg hover:bg-stone-100 text-stone-500 transition-colors">
+          <button onClick={next} className="p-1 rounded-lg hover:bg-stone-800 text-stone-500 hover:text-stone-300 transition-colors">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
@@ -59,14 +59,12 @@ export function CalendarHeatmap({ records, onDateClick }: Props) {
         </div>
       </div>
 
-      {/* Day headers */}
       <div className="grid grid-cols-7 mb-1">
         {DAYS.map(d => (
-          <div key={d} className="text-center text-xs font-medium text-stone-400 py-1">{d}</div>
+          <div key={d} className="text-center text-xs font-medium text-stone-600 py-1">{d}</div>
         ))}
       </div>
 
-      {/* Calendar grid */}
       <div className="grid grid-cols-7 gap-1">
         {Array.from({ length: firstDow }).map((_, i) => (
           <div key={`empty-${i}`} />
@@ -75,7 +73,7 @@ export function CalendarHeatmap({ records, onDateClick }: Props) {
           const record = records[date];
           const isToday = date === todayStr;
           const future = isFuture(date);
-          const bgClass = getRatingBg(record, date);
+          const cellClass = getCellClass(record, date);
           const dayNum = parseInt(date.split('-')[2]);
 
           return (
@@ -87,9 +85,8 @@ export function CalendarHeatmap({ records, onDateClick }: Props) {
               className={`
                 aspect-square flex items-center justify-center text-xs rounded-lg font-medium
                 transition-all duration-100
-                ${bgClass}
-                ${isToday ? 'ring-2 ring-amber-400 ring-offset-1' : ''}
-                ${future ? 'opacity-30 cursor-default' : ''}
+                ${cellClass}
+                ${isToday ? 'ring-2 ring-amber-400 ring-offset-1 ring-offset-stone-900' : ''}
               `}
             >
               {dayNum}
@@ -98,18 +95,17 @@ export function CalendarHeatmap({ records, onDateClick }: Props) {
         })}
       </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap gap-3 mt-4 pt-3 border-t border-stone-100">
+      <div className="flex flex-wrap gap-3 mt-4 pt-3 border-t border-stone-800">
         {[
-          { color: 'bg-stone-200', label: 'No record' },
-          { color: 'bg-rose-200', label: 'Miss' },
-          { color: 'bg-amber-200', label: 'Accomplished' },
-          { color: 'bg-emerald-200', label: 'Well Done' },
+          { color: 'bg-stone-700', label: 'No record' },
+          { color: 'bg-rose-950 border border-rose-800', label: 'Miss' },
+          { color: 'bg-amber-950 border border-amber-800', label: 'Accomplished' },
+          { color: 'bg-emerald-950 border border-emerald-800', label: 'Well Done' },
           { color: 'bg-emerald-500', label: 'Above & Beyond' },
         ].map(item => (
           <div key={item.label} className="flex items-center gap-1.5">
             <span className={`w-3 h-3 rounded ${item.color}`} />
-            <span className="text-xs text-stone-400">{item.label}</span>
+            <span className="text-xs text-stone-500">{item.label}</span>
           </div>
         ))}
       </div>

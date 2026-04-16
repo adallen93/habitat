@@ -33,7 +33,7 @@ function App() {
   }, [saveRecord]);
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-950">
       <Header
         activeTab={activeTab}
         onTabChange={handleTabChange}

@@ -37,12 +37,12 @@ export function computeScore(completed: HabitId[]): ScoreResult {
 export function getRatingConfig(rating: Rating) {
   switch (rating) {
     case 'Miss':
-      return { color: 'bg-rose-100 text-rose-700 border-rose-200', dot: 'bg-rose-500', label: 'Miss' };
+      return { color: 'bg-rose-950 text-rose-400 border-rose-800', dot: 'bg-rose-500', label: 'Miss' };
     case 'Accomplished':
-      return { color: 'bg-amber-100 text-amber-700 border-amber-200', dot: 'bg-amber-500', label: 'Accomplished' };
+      return { color: 'bg-amber-950 text-amber-400 border-amber-800', dot: 'bg-amber-500', label: 'Accomplished' };
     case 'Well Done':
-      return { color: 'bg-emerald-100 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500', label: 'Well Done' };
+      return { color: 'bg-emerald-950 text-emerald-400 border-emerald-800', dot: 'bg-emerald-500', label: 'Well Done' };
     case 'Above and Beyond':
-      return { color: 'bg-emerald-100 text-emerald-800 border-emerald-300', dot: 'bg-emerald-700', label: 'Above and Beyond' };
+      return { color: 'bg-emerald-950 text-emerald-300 border-emerald-700', dot: 'bg-emerald-400', label: 'Above and Beyond' };
   }
 }

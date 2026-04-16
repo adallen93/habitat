@@ -16,15 +16,15 @@ export function ScorePreview({ checked }: Props) {
   const pct = (score / TOTAL) * 100;
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200 p-4">
+    <div className="bg-stone-900 rounded-2xl border border-stone-700 p-4">
       <div className="flex items-center justify-between mb-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">Today's Score</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-stone-500 mb-1">Today's Score</p>
           <div className="flex items-baseline gap-1">
-            <span className="text-3xl font-bold text-stone-800">{score}</span>
-            <span className="text-stone-400 text-lg">/ {TOTAL}</span>
+            <span className="text-3xl font-bold text-stone-100">{score}</span>
+            <span className="text-stone-500 text-lg">/ {TOTAL}</span>
             {totalPenalty > 0 && (
-              <span className="text-sm text-rose-500 font-medium ml-1">→ {effectiveScore} effective</span>
+              <span className="text-sm text-rose-400 font-medium ml-1">→ {effectiveScore} effective</span>
             )}
           </div>
         </div>
@@ -32,7 +32,7 @@ export function ScorePreview({ checked }: Props) {
       </div>
 
       {/* Progress bar */}
-      <div className="h-2 bg-stone-100 rounded-full overflow-hidden mb-3">
+      <div className="h-2 bg-stone-800 rounded-full overflow-hidden mb-3">
         <div
           className="h-full rounded-full transition-all duration-300 bg-amber-400"
           style={{ width: `${pct}%` }}
@@ -44,12 +44,12 @@ export function ScorePreview({ checked }: Props) {
         <div className="flex gap-3 text-xs">
           {(['morning', 'evening', 'other'] as const).map(cat => (
             penalties[cat] > 0 ? (
-              <span key={cat} className="text-rose-500 font-medium">
+              <span key={cat} className="text-rose-400 font-medium">
                 {cat.charAt(0).toUpperCase() + cat.slice(1)}: -{penalties[cat]}
               </span>
             ) : null
           ))}
-          <span className="text-stone-400 ml-auto">Priority penalty</span>
+          <span className="text-stone-500 ml-auto">Priority penalty</span>
         </div>
       )}
     </div>

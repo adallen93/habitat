@@ -29,7 +29,7 @@ export function ExportImport({ onExport, onImport }: Props) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-700 transition-colors px-3 py-1.5 rounded-lg hover:bg-stone-100"
+        className="flex items-center gap-1.5 text-sm text-stone-400 hover:text-stone-200 transition-colors px-3 py-1.5 rounded-lg hover:bg-stone-800"
         title="Export or import data"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,15 +40,13 @@ export function ExportImport({ onExport, onImport }: Props) {
 
       <Modal isOpen={isOpen} onClose={() => { setIsOpen(false); setMessage(null); }} title="Export / Import">
         <div className="space-y-4">
-          <div>
-            <p className="text-sm text-stone-600 mb-3">
-              Export your data as a JSON backup file, or import a previous backup.
-            </p>
-          </div>
+          <p className="text-sm text-stone-400 mb-3">
+            Export your data as a JSON backup file, or import a previous backup.
+          </p>
 
           <button
             onClick={() => { onExport(); setMessage({ text: 'Data exported.', ok: true }); }}
-            className="w-full flex items-center justify-center gap-2 bg-stone-800 hover:bg-stone-900 text-white text-sm font-medium py-2.5 px-4 rounded-xl transition-colors"
+            className="w-full flex items-center justify-center gap-2 bg-stone-100 hover:bg-white text-stone-900 text-sm font-medium py-2.5 px-4 rounded-xl transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -58,7 +56,7 @@ export function ExportImport({ onExport, onImport }: Props) {
 
           <button
             onClick={() => fileRef.current?.click()}
-            className="w-full flex items-center justify-center gap-2 border border-stone-200 hover:border-stone-300 text-stone-700 text-sm font-medium py-2.5 px-4 rounded-xl transition-colors hover:bg-stone-50"
+            className="w-full flex items-center justify-center gap-2 border border-stone-700 hover:border-stone-500 text-stone-300 text-sm font-medium py-2.5 px-4 rounded-xl transition-colors hover:bg-stone-800"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4-4m0 0l4 4m-4-4v12" />
@@ -68,7 +66,7 @@ export function ExportImport({ onExport, onImport }: Props) {
           <input ref={fileRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
 
           {message && (
-            <p className={`text-sm text-center font-medium ${message.ok ? 'text-emerald-600' : 'text-rose-600'}`}>
+            <p className={`text-sm text-center font-medium ${message.ok ? 'text-emerald-400' : 'text-rose-400'}`}>
               {message.text}
             </p>
           )}

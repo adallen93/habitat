@@ -14,12 +14,12 @@ export function HabitGroup({ label, habits, checked, onToggle, accentClass, labe
   const completedCount = habits.filter(h => checked.has(h.id)).length;
 
   return (
-    <div className="rounded-2xl border border-stone-200 bg-white overflow-hidden">
+    <div className="rounded-2xl border border-stone-700 bg-stone-900 overflow-hidden">
       <div className={`flex items-center justify-between px-4 py-2.5 ${accentClass}`}>
         <span className={`text-xs font-semibold uppercase tracking-widest ${labelClass}`}>{label}</span>
         <span className={`text-xs font-medium ${labelClass} opacity-70`}>{completedCount} / {habits.length}</span>
       </div>
-      <div className="divide-y divide-stone-50">
+      <div className="divide-y divide-stone-800">
         {habits.map(habit => (
           <HabitRow
             key={habit.id}
