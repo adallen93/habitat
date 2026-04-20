@@ -14,9 +14,9 @@ function getCellClass(record: DayRecord | undefined, date: string): string {
   if (!record) return 'bg-stone-800 text-stone-500 hover:bg-stone-700 cursor-pointer';
   switch (record.rating) {
     case 'Miss': return 'bg-rose-950 text-rose-400 hover:bg-rose-900 cursor-pointer';
-    case 'Accomplished': return 'bg-amber-950 text-amber-400 hover:bg-amber-900 cursor-pointer';
-    case 'Well Done': return 'bg-emerald-950 text-emerald-400 hover:bg-emerald-900 cursor-pointer';
-    case 'Above and Beyond': return 'bg-emerald-500 text-stone-900 hover:bg-emerald-400 cursor-pointer font-bold';
+    case 'Pass': return 'bg-amber-950 text-amber-400 hover:bg-amber-900 cursor-pointer';
+    case 'Good': return 'bg-emerald-950 text-emerald-400 hover:bg-emerald-900 cursor-pointer';
+    case 'Excellent': return 'bg-emerald-500 text-stone-900 hover:bg-emerald-400 cursor-pointer font-bold';
   }
 }
 
@@ -99,9 +99,9 @@ export function CalendarHeatmap({ records, onDateClick }: Props) {
         {[
           { color: 'bg-stone-700', label: 'No record' },
           { color: 'bg-rose-950 border border-rose-800', label: 'Miss' },
-          { color: 'bg-amber-950 border border-amber-800', label: 'Accomplished' },
-          { color: 'bg-emerald-950 border border-emerald-800', label: 'Well Done' },
-          { color: 'bg-emerald-500', label: 'Above & Beyond' },
+          { color: 'bg-amber-950 border border-amber-800', label: 'Pass' },
+          { color: 'bg-emerald-950 border border-emerald-800', label: 'Good' },
+          { color: 'bg-emerald-500', label: 'Excellent' },
         ].map(item => (
           <div key={item.label} className="flex items-center gap-1.5">
             <span className={`w-3 h-3 rounded ${item.color}`} />

@@ -53,6 +53,12 @@ export const HABITS: Habit[] = [
     categories: ['other'],
   },
   {
+    id: 'noVideosWorkHours',
+    label: 'No starting any videos during work hours',
+    shortLabel: 'No videos',
+    categories: ['other'],
+  },
+  {
     id: 'tenMinOutside',
     label: '10 minutes outside',
     shortLabel: 'Outside',

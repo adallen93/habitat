@@ -13,7 +13,7 @@ export function RatingBadge({ rating, size = 'md' }: Props) {
   return (
     <span className={`inline-flex items-center gap-1.5 rounded-full font-medium border ${config.color} ${sizeClass}`}>
       <span className={`w-1.5 h-1.5 rounded-full ${config.dot}`} />
-      {rating === 'Above and Beyond' ? (
+      {rating === 'Excellent' ? (
         <span className="flex items-center gap-1">
           {config.label}
           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">

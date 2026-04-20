@@ -1,5 +1,6 @@
 import type { DayRecord } from '../../types';
 import { HABITS } from '../../constants/habits';
+import { getLastNDays } from '../../lib/dateUtils';
 
 interface Props {
   records: Record<string, DayRecord>;
@@ -15,20 +16,26 @@ export function StatsCard({ records, currentStreak, bestStreak }: Props) {
     ? (allRecords.reduce((sum, r) => sum + r.effectiveScore, 0) / totalDays).toFixed(1)
     : '—';
 
-  let mostMissed = '—';
-  if (totalDays > 0) {
+  function computeMostMissed(days: DayRecord[]): string {
+    if (days.length === 0) return '—';
     let lowestRate = Infinity;
     let lowestHabit = '';
     for (const habit of HABITS) {
-      const completions = allRecords.filter(r => r.completed.includes(habit.id)).length;
-      const rate = completions / totalDays;
+      const completions = days.filter(r => r.completed.includes(habit.id)).length;
+      const rate = completions / days.length;
       if (rate < lowestRate) {
         lowestRate = rate;
         lowestHabit = habit.shortLabel;
       }
     }
-    mostMissed = lowestHabit;
+    return lowestHabit;
   }
+
+  const mostMissed = computeMostMissed(allRecords);
+
+  const recentDates = new Set(getLastNDays(14));
+  const recentRecords = allRecords.filter(r => recentDates.has(r.date));
+  const mostMissed2wk = recentRecords.length >= 2 ? computeMostMissed(recentRecords) : null;
 
   const stats = [
     { label: 'Days Logged', value: String(totalDays) },
@@ -49,9 +56,17 @@ export function StatsCard({ records, currentStreak, bestStreak }: Props) {
         ))}
       </div>
       {totalDays > 0 && (
-        <div className="mt-3 bg-rose-950 rounded-xl p-3 flex items-center justify-between">
-          <span className="text-xs text-rose-400 font-medium">Most often missed</span>
-          <span className="text-sm font-semibold text-rose-300">{mostMissed}</span>
+        <div className="mt-3 flex flex-col gap-2">
+          <div className="bg-rose-950 rounded-xl p-3 flex items-center justify-between">
+            <span className="text-xs text-rose-400 font-medium">Most missed (all time)</span>
+            <span className="text-sm font-semibold text-rose-300">{mostMissed}</span>
+          </div>
+          {mostMissed2wk && (
+            <div className="bg-rose-950 rounded-xl p-3 flex items-center justify-between">
+              <span className="text-xs text-rose-400 font-medium">Most missed (2 weeks)</span>
+              <span className="text-sm font-semibold text-rose-300">{mostMissed2wk}</span>
+            </div>
+          )}
         </div>
       )}
     </div>

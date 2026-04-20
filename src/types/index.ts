@@ -7,6 +7,7 @@ export type HabitId =
   | 'exercise'
   | 'coldShowerBreathing'
   | 'makeKeepCommitment'
+  | 'noVideosWorkHours'
   | 'tenMinOutside'
   | 'twoHoursDeepWork'
   | 'savorBite'
@@ -26,7 +27,7 @@ export interface Habit {
   categories: Category[];
 }
 
-export type Rating = 'Miss' | 'Accomplished' | 'Well Done' | 'Above and Beyond';
+export type Rating = 'Miss' | 'Pass' | 'Good' | 'Excellent';
 
 export interface DayRecord {
   date: string;
