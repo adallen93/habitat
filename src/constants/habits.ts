@@ -29,9 +29,8 @@ export const HABITS: Habit[] = [
   },
   {
     id: 'noEatingAfterPortion',
-    label: 'No eating after 1½ portions of dinner',
-    shortLabel: 'Dinner portions',
-    sublabel: 'Stop at 1½ portions',
+    label: 'No eating after dinner',
+    shortLabel: 'No eating after dinner',
     categories: ['evening'],
   },
   {
