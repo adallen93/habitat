@@ -1,16 +1,17 @@
 import type { HabitId } from '../../types';
 import { computeScore } from '../../lib/scoring';
+import { HABITS } from '../../constants/habits';
 import { RatingBadge } from '../shared/RatingBadge';
 
 interface Props {
   checked: Set<HabitId>;
+  date?: string;
 }
 
-const TOTAL = 16;
-
-export function ScorePreview({ checked }: Props) {
+export function ScorePreview({ checked, date }: Props) {
   const completed = Array.from(checked) as HabitId[];
-  const { score, effectiveScore, rating, penalties } = computeScore(completed);
+  const { score, effectiveScore, rating, penalties } = computeScore(completed, date);
+  const TOTAL = HABITS.length;
   const totalPenalty = Object.values(penalties).reduce((a, b) => a + b, 0);
 
   const pct = (score / TOTAL) * 100;

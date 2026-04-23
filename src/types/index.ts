@@ -7,7 +7,6 @@ export type HabitId =
   | 'exercise'
   | 'coldShowerBreathing'
   | 'makeKeepCommitment'
-  | 'noVideosWorkHours'
   | 'tenMinOutside'
   | 'twoHoursDeepWork'
   | 'savorBite'
@@ -25,6 +24,7 @@ export interface Habit {
   shortLabel: string;
   sublabel?: string;
   categories: Category[];
+  createdDate?: string;
 }
 
 export type Rating = 'Miss' | 'Pass' | 'Good' | 'Excellent';

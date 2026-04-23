@@ -1,5 +1,6 @@
 import type { HabitatStore, DayRecord, HabitId } from '../types';
 import { computeScore } from './scoring';
+import { HABIT_MAP } from '../constants/habits';
 
 const STORAGE_KEY = 'habitat_records';
 const CURRENT_VERSION = 1;
@@ -26,10 +27,11 @@ export function saveStore(store: HabitatStore): void {
 
 export function saveRecord(date: string, completed: HabitId[]): DayRecord {
   const store = loadStore();
-  const { score, effectiveScore, rating } = computeScore(completed);
+  const cleanedCompleted = completed.filter(id => id in HABIT_MAP);
+  const { score, effectiveScore, rating } = computeScore(cleanedCompleted as HabitId[], date);
   const record: DayRecord = {
     date,
-    completed,
+    completed: cleanedCompleted as HabitId[],
     score,
     effectiveScore,
     rating,

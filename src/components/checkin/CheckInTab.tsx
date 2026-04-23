@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { HabitId, DayRecord } from '../../types';
-import { HABITS_BY_CATEGORY } from '../../constants/habits';
+import { HABITS, getHabitsByCategoryForDate } from '../../constants/habits';
 import { todayString, formatDisplayDate } from '../../lib/dateUtils';
 import { HabitGroup } from './HabitGroup';
 import { ScorePreview } from './ScorePreview';
@@ -42,7 +42,7 @@ export function CheckInTab({ getRecord, saveRecord, initialDate }: Props) {
   function handleSave() {
     const record = saveRecord(selectedDate, Array.from(checked) as HabitId[]);
     setSaved(true);
-    const msg = `Saved! ${record.rating} — ${record.effectiveScore}/16`;
+    const msg = `Saved! ${record.rating} — ${record.effectiveScore}/${HABITS.length}`;
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
   }
@@ -86,14 +86,14 @@ export function CheckInTab({ getRecord, saveRecord, initialDate }: Props) {
       </div>
 
       {/* Score preview */}
-      <ScorePreview checked={checked} />
+      <ScorePreview checked={checked} date={selectedDate} />
 
       {/* Habit groups */}
       {GROUPS.map(g => (
         <HabitGroup
           key={g.key}
           label={g.label}
-          habits={HABITS_BY_CATEGORY[g.key]}
+          habits={getHabitsByCategoryForDate(selectedDate)[g.key]}
           checked={checked}
           onToggle={toggle}
           accentClass={g.accentClass}

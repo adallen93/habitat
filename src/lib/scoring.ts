@@ -1,5 +1,5 @@
 import type { HabitId, Rating } from '../types';
-import { HABITS_BY_CATEGORY, PRIORITY_CATEGORIES } from '../constants/habits';
+import { HABITS, HABITS_BY_CATEGORY, PRIORITY_CATEGORIES, getHabitsByCategoryForDate } from '../constants/habits';
 
 export interface ScoreResult {
   score: number;
@@ -8,15 +8,16 @@ export interface ScoreResult {
   penalties: Record<string, number>;
 }
 
-export function computeScore(completed: HabitId[]): ScoreResult {
+export function computeScore(completed: HabitId[], date?: string): ScoreResult {
   const completedSet = new Set(completed);
   const score = completed.length;
+  const habitsByCategory = date ? getHabitsByCategoryForDate(date) : HABITS_BY_CATEGORY;
 
   const penalties: Record<string, number> = {};
   let totalPenalty = 0;
 
   for (const cat of PRIORITY_CATEGORIES) {
-    const habitsInCat = HABITS_BY_CATEGORY[cat];
+    const habitsInCat = habitsByCategory[cat];
     const missed = habitsInCat.filter(h => !completedSet.has(h.id)).length;
     const penalty = Math.max(0, missed - 1);
     penalties[cat] = penalty;
@@ -24,11 +25,12 @@ export function computeScore(completed: HabitId[]): ScoreResult {
   }
 
   const effectiveScore = score - totalPenalty;
+  const n = HABITS.length;
 
   let rating: Rating;
-  if (effectiveScore < 13) rating = 'Miss';
-  else if (effectiveScore === 13) rating = 'Pass';
-  else if (effectiveScore < 16) rating = 'Good';
+  if (effectiveScore < n - 4) rating = 'Miss';
+  else if (effectiveScore === n - 4) rating = 'Pass';
+  else if (effectiveScore < n - 1) rating = 'Good';
   else rating = 'Excellent';
 
   return { score, effectiveScore, rating, penalties };

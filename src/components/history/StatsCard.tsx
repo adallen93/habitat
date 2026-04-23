@@ -18,17 +18,21 @@ export function StatsCard({ records, currentStreak, bestStreak }: Props) {
 
   function computeMostMissed(days: DayRecord[]): string {
     if (days.length === 0) return '—';
+    const firstRecordDate = Object.keys(records).sort()[0];
     let lowestRate = Infinity;
     let lowestHabit = '';
     for (const habit of HABITS) {
-      const completions = days.filter(r => r.completed.includes(habit.id)).length;
-      const rate = completions / days.length;
+      const effectiveStart = habit.createdDate ?? firstRecordDate;
+      const eligible = effectiveStart ? days.filter(r => r.date >= effectiveStart) : days;
+      if (eligible.length === 0) continue;
+      const completions = eligible.filter(r => r.completed.includes(habit.id)).length;
+      const rate = completions / eligible.length;
       if (rate < lowestRate) {
         lowestRate = rate;
         lowestHabit = habit.shortLabel;
       }
     }
-    return lowestHabit;
+    return lowestHabit || '—';
   }
 
   const mostMissed = computeMostMissed(allRecords);

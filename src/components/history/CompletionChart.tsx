@@ -22,12 +22,17 @@ export function CompletionChart({ records }: Props) {
     );
   }
 
+  const firstRecordDate = Object.keys(records).sort()[0];
+
   const data = HABITS.map(habit => {
-    const allTime = allRecords.length > 0
-      ? Math.round(allRecords.filter(r => r.completed.includes(habit.id)).length / allRecords.length * 100)
+    const effectiveStart = habit.createdDate ?? firstRecordDate;
+    const eligibleAll = effectiveStart ? allRecords.filter(r => r.date >= effectiveStart) : allRecords;
+    const eligibleRecent = effectiveStart ? last14Records.filter(r => r.date >= effectiveStart) : last14Records;
+    const allTime = eligibleAll.length > 0
+      ? Math.round(eligibleAll.filter(r => r.completed.includes(habit.id)).length / eligibleAll.length * 100)
       : 0;
-    const twoWeek = last14Records.length > 0
-      ? Math.round(last14Records.filter(r => r.completed.includes(habit.id)).length / last14Records.length * 100)
+    const twoWeek = eligibleRecent.length > 0
+      ? Math.round(eligibleRecent.filter(r => r.completed.includes(habit.id)).length / eligibleRecent.length * 100)
       : 0;
     return { name: habit.shortLabel, fullName: habit.label, allTime, twoWeek };
   });

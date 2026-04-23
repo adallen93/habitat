@@ -10,6 +10,7 @@ interface Props {
 
 export function WeekTable({ records, onDateClick }: Props) {
   const dates = getLastNDays(14);
+  const firstRecordDate = Object.keys(records).sort()[0];
 
   return (
     <div className="bg-stone-900 rounded-2xl border border-stone-700 overflow-hidden">
@@ -43,7 +44,8 @@ export function WeekTable({ records, onDateClick }: Props) {
                     </button>
                   </td>
                   {HABITS.map(h => {
-                    if (!record) {
+                    const effectiveStart = h.createdDate ?? firstRecordDate;
+                    if (!record || (effectiveStart && date < effectiveStart)) {
                       return <td key={h.id} className="px-1.5 py-2 text-center text-stone-700">—</td>;
                     }
                     const done = record.completed.includes(h.id);

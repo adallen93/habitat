@@ -1,4 +1,5 @@
-import type { Habit, Category } from '../types';
+import type { Habit, Category, HabitId } from '../types';
+import { parseDate } from '../lib/dateUtils';
 
 export const HABITS: Habit[] = [
   {
@@ -53,12 +54,6 @@ export const HABITS: Habit[] = [
     categories: ['other'],
   },
   {
-    id: 'noVideosWorkHours',
-    label: 'No starting any videos during work hours',
-    shortLabel: 'No videos',
-    categories: ['other'],
-  },
-  {
     id: 'tenMinOutside',
     label: '10 minutes outside',
     shortLabel: 'Outside',
@@ -68,7 +63,7 @@ export const HABITS: Habit[] = [
     id: 'twoHoursDeepWork',
     label: '2 hours of deep work',
     shortLabel: 'Deep work',
-    categories: ['none'],
+    categories: ['other'],
   },
   {
     id: 'savorBite',
@@ -95,7 +90,7 @@ export const HABITS: Habit[] = [
     label: '30 minutes of pleasure reading | Write gratitude journal entry',
     shortLabel: 'Reading',
     sublabel: '30 min reading OR gratitude journal',
-    categories: ['none'],
+    categories: ['evening'],
   },
   {
     id: 'physicalContactConversation',
@@ -123,3 +118,19 @@ export const HABITS_BY_CATEGORY: Record<Category, Habit[]> = {
 };
 
 export const PRIORITY_CATEGORIES: Category[] = ['morning', 'evening', 'other'];
+
+export const SATURDAY_EXCLUDED_HABIT_IDS: HabitId[] = ['twoHoursDeepWork'];
+
+export function getHabitsByCategoryForDate(date: string): Record<Category, Habit[]> {
+  const isSaturday = parseDate(date).getDay() === 6;
+  if (!isSaturday) return HABITS_BY_CATEGORY;
+  return {
+    morning: HABITS_BY_CATEGORY.morning,
+    evening: HABITS_BY_CATEGORY.evening,
+    other: HABITS_BY_CATEGORY.other.filter(h => !SATURDAY_EXCLUDED_HABIT_IDS.includes(h.id)),
+    none: [
+      ...HABITS_BY_CATEGORY.none,
+      ...HABITS_BY_CATEGORY.other.filter(h => SATURDAY_EXCLUDED_HABIT_IDS.includes(h.id)),
+    ],
+  };
+}
