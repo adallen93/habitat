@@ -49,6 +49,16 @@ export function CheckInTab({ getRecord, saveRecord, initialDate }: Props) {
 
   const isToday = selectedDate === todayString();
 
+  function shiftDate(days: number) {
+    const [y, m, d] = selectedDate.split('-').map(Number);
+    const date = new Date(y, m - 1, d);
+    date.setDate(date.getDate() + days);
+    const yr = date.getFullYear();
+    const mo = String(date.getMonth() + 1).padStart(2, '0');
+    const dy = String(date.getDate()).padStart(2, '0');
+    setSelectedDate(`${yr}-${mo}-${dy}`);
+  }
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
       {/* Date picker */}
@@ -58,12 +68,27 @@ export function CheckInTab({ getRecord, saveRecord, initialDate }: Props) {
             Date
           </label>
           <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => shiftDate(-1)}
+              className="text-stone-400 hover:text-stone-200 transition-colors px-1"
+              aria-label="Previous day"
+            >
+              &#8592;
+            </button>
             <input
               type="date"
               value={selectedDate}
               onChange={e => setSelectedDate(e.target.value)}
               className="bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-sm text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent [color-scheme:dark]"
             />
+            <button
+              onClick={() => shiftDate(1)}
+              disabled={isToday}
+              className="text-stone-400 hover:text-stone-200 transition-colors px-1 disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="Next day"
+            >
+              &#8594;
+            </button>
             <span className="text-sm text-stone-500">{formatDisplayDate(selectedDate)}</span>
             {!isToday && (
               <button
