@@ -1,6 +1,4 @@
 import type { DayRecord } from '../../types';
-import { HABITS } from '../../constants/habits';
-import { getLastNDays } from '../../lib/dateUtils';
 
 interface Props {
   records: Record<string, DayRecord>;
@@ -15,31 +13,6 @@ export function StatsCard({ records, currentStreak, bestStreak }: Props) {
   const avgScore = totalDays > 0
     ? (allRecords.reduce((sum, r) => sum + r.effectiveScore, 0) / totalDays).toFixed(1)
     : '—';
-
-  function computeMostMissed(days: DayRecord[]): string {
-    if (days.length === 0) return '—';
-    const firstRecordDate = Object.keys(records).sort()[0];
-    let lowestRate = Infinity;
-    let lowestHabit = '';
-    for (const habit of HABITS) {
-      const effectiveStart = habit.createdDate ?? firstRecordDate;
-      const eligible = effectiveStart ? days.filter(r => r.date >= effectiveStart) : days;
-      if (eligible.length === 0) continue;
-      const completions = eligible.filter(r => r.completed.includes(habit.id)).length;
-      const rate = completions / eligible.length;
-      if (rate < lowestRate) {
-        lowestRate = rate;
-        lowestHabit = habit.shortLabel;
-      }
-    }
-    return lowestHabit || '—';
-  }
-
-  const mostMissed = computeMostMissed(allRecords);
-
-  const recentDates = new Set(getLastNDays(14));
-  const recentRecords = allRecords.filter(r => recentDates.has(r.date));
-  const mostMissed2wk = recentRecords.length >= 2 ? computeMostMissed(recentRecords) : null;
 
   const stats = [
     { label: 'Days Logged', value: String(totalDays) },
@@ -59,20 +32,6 @@ export function StatsCard({ records, currentStreak, bestStreak }: Props) {
           </div>
         ))}
       </div>
-      {totalDays > 0 && (
-        <div className="mt-3 flex flex-col gap-2">
-          <div className="bg-rose-950 rounded-xl p-3 flex items-center justify-between">
-            <span className="text-xs text-rose-400 font-medium">Most missed (all time)</span>
-            <span className="text-sm font-semibold text-rose-300">{mostMissed}</span>
-          </div>
-          {mostMissed2wk && (
-            <div className="bg-rose-950 rounded-xl p-3 flex items-center justify-between">
-              <span className="text-xs text-rose-400 font-medium">Most missed (2 weeks)</span>
-              <span className="text-sm font-semibold text-rose-300">{mostMissed2wk}</span>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }

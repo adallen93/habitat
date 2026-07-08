@@ -14,9 +14,10 @@ export type HabitId =
   | 'manualLabor'
   | 'pleasureReadingGratitude'
   | 'physicalContactConversation'
-  | 'meditationCbt';
+  | 'meditationCbt'
+  | 'workspaceWorkOnly';
 
-export type Category = 'morning' | 'evening' | 'other' | 'none';
+export type Category = 'highPriority' | 'morning' | 'evening' | 'other' | 'none';
 
 export interface Habit {
   id: HabitId;

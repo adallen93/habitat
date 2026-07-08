@@ -12,6 +12,7 @@ interface Props {
 }
 
 const GROUPS = [
+  { key: 'highPriority' as const, label: 'High Priority', accentClass: 'bg-rose-950', labelClass: 'text-rose-400' },
   { key: 'morning' as const, label: 'Morning', accentClass: 'bg-sky-950', labelClass: 'text-sky-400' },
   { key: 'evening' as const, label: 'Evening', accentClass: 'bg-violet-950', labelClass: 'text-violet-400' },
   { key: 'other' as const, label: 'Other Priority', accentClass: 'bg-teal-950', labelClass: 'text-teal-400' },

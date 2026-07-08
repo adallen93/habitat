@@ -1,5 +1,12 @@
 import type { HabitId, Rating } from '../types';
-import { HABITS, HABITS_BY_CATEGORY, PRIORITY_CATEGORIES, getHabitsByCategoryForDate } from '../constants/habits';
+import {
+  HABITS,
+  HABITS_BY_CATEGORY,
+  PRIORITY_CATEGORIES,
+  HIGH_PRIORITY_CATEGORIES,
+  HIGH_PRIORITY_PENALTY_PER_MISS,
+  getHabitsByCategoryForDate,
+} from '../constants/habits';
 
 export interface ScoreResult {
   score: number;
@@ -20,6 +27,15 @@ export function computeScore(completed: HabitId[], date?: string): ScoreResult {
     const habitsInCat = habitsByCategory[cat];
     const missed = habitsInCat.filter(h => !completedSet.has(h.id)).length;
     const penalty = Math.max(0, missed - 1);
+    penalties[cat] = penalty;
+    totalPenalty += penalty;
+  }
+
+  // High-priority categories: no free miss, HIGH_PRIORITY_PENALTY_PER_MISS per miss.
+  for (const cat of HIGH_PRIORITY_CATEGORIES) {
+    const habitsInCat = habitsByCategory[cat];
+    const missed = habitsInCat.filter(h => !completedSet.has(h.id)).length;
+    const penalty = missed * HIGH_PRIORITY_PENALTY_PER_MISS;
     penalties[cat] = penalty;
     totalPenalty += penalty;
   }

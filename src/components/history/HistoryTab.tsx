@@ -1,7 +1,9 @@
 import type { DayRecord } from '../../types';
 import { StatsCard } from './StatsCard';
+import { FlaggedHabitsTable } from './FlaggedHabitsTable';
 import { WeekTable } from './WeekTable';
 import { CompletionChart } from './CompletionChart';
+import { HabitLineChart } from './HabitLineChart';
 import { CalendarHeatmap } from './CalendarHeatmap';
 import { useStreaks } from '../../hooks/useStreaks';
 
@@ -27,9 +29,11 @@ export function HistoryTab({ records, onDateClick }: Props) {
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
       <StatsCard records={records} currentStreak={currentStreak} bestStreak={bestStreak} />
+      <FlaggedHabitsTable records={records} />
       <CalendarHeatmap records={records} onDateClick={onDateClick} />
       <WeekTable records={records} onDateClick={onDateClick} />
       <CompletionChart records={records} />
+      <HabitLineChart records={records} />
     </div>
   );
 }

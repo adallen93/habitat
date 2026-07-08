@@ -1,18 +1,24 @@
+import { useState } from 'react';
 import type { DayRecord } from '../../types';
 import { HABITS } from '../../constants/habits';
-import { getLastNDays } from '../../lib/dateUtils';
+import { completionRate, windowRecords, TIME_WINDOWS, type TimeWindow } from '../../lib/analytics';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 
 interface Props {
   records: Record<string, DayRecord>;
 }
 
+const SERIES: Record<TimeWindow, { label: string; color: string }> = {
+  '2wk': { label: 'Last 2 weeks', color: '#fbbf24' },
+  '30d': { label: 'Last 30 days', color: '#10b981' },
+  all: { label: 'All time', color: '#3b82f6' },
+};
+
 export function CompletionChart({ records }: Props) {
+  const [active, setActive] = useState<Record<TimeWindow, boolean>>({ '2wk': true, '30d': true, all: true });
   const allRecords = Object.values(records);
-  const last14 = getLastNDays(14);
-  const last14Records = last14.map(d => records[d]).filter(Boolean) as DayRecord[];
 
   if (allRecords.length === 0) {
     return (
@@ -23,23 +29,47 @@ export function CompletionChart({ records }: Props) {
   }
 
   const firstRecordDate = Object.keys(records).sort()[0];
+  const windowRecordSets = Object.fromEntries(
+    TIME_WINDOWS.map(w => [w.key, windowRecords(allRecords, w.days)]),
+  ) as Record<TimeWindow, DayRecord[]>;
 
   const data = HABITS.map(habit => {
-    const effectiveStart = habit.createdDate ?? firstRecordDate;
-    const eligibleAll = effectiveStart ? allRecords.filter(r => r.date >= effectiveStart) : allRecords;
-    const eligibleRecent = effectiveStart ? last14Records.filter(r => r.date >= effectiveStart) : last14Records;
-    const allTime = eligibleAll.length > 0
-      ? Math.round(eligibleAll.filter(r => r.completed.includes(habit.id)).length / eligibleAll.length * 100)
-      : 0;
-    const twoWeek = eligibleRecent.length > 0
-      ? Math.round(eligibleRecent.filter(r => r.completed.includes(habit.id)).length / eligibleRecent.length * 100)
-      : 0;
-    return { name: habit.shortLabel, fullName: habit.label, allTime, twoWeek };
+    const row: Record<string, string | number> = { name: habit.shortLabel, fullName: habit.label };
+    for (const w of TIME_WINDOWS) {
+      row[w.key] = completionRate(windowRecordSets[w.key], habit, firstRecordDate) ?? 0;
+    }
+    return row;
   });
+
+  const activeKeys = TIME_WINDOWS.map(w => w.key).filter(k => active[k]);
 
   return (
     <div className="bg-stone-900 rounded-2xl border border-stone-700 p-4">
-      <p className="text-xs font-semibold uppercase tracking-widest text-stone-500 mb-4">Completion Rate by Habit</p>
+      <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
+        <p className="text-xs font-semibold uppercase tracking-widest text-stone-500">Completion Rate by Habit</p>
+        <div className="flex gap-1.5">
+          {TIME_WINDOWS.map(w => {
+            const on = active[w.key];
+            return (
+              <button
+                key={w.key}
+                onClick={() => setActive(prev => ({ ...prev, [w.key]: !prev[w.key] }))}
+                className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors border ${
+                  on
+                    ? 'bg-stone-800 border-stone-600 text-stone-200'
+                    : 'bg-transparent border-stone-800 text-stone-600'
+                }`}
+              >
+                <span
+                  className="w-2 h-2 rounded-full"
+                  style={{ backgroundColor: on ? SERIES[w.key].color : '#57534e' }}
+                />
+                {w.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
       <div className="overflow-x-auto">
         <div style={{ minWidth: '700px' }}>
           <ResponsiveContainer width="100%" height={300}>
@@ -64,41 +94,28 @@ export function CompletionChart({ records }: Props) {
               />
               <Tooltip
                 cursor={{ fill: 'rgba(255,255,255,0.04)' }}
-                content={({ active, payload }) => {
-                  if (!active || !payload?.length) return null;
-                  const item = payload[0]?.payload as { fullName: string; allTime: number; twoWeek: number };
+                content={({ active: ttActive, payload }) => {
+                  if (!ttActive || !payload?.length) return null;
+                  const item = payload[0]?.payload as Record<string, string | number>;
                   return (
                     <div className="bg-stone-800 border border-stone-600 rounded-xl shadow-xl p-3 text-xs">
                       <p className="font-semibold text-stone-200 mb-2 max-w-[180px]">{item.fullName}</p>
                       <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-blue-500" />
-                          <span className="text-stone-400">All time:</span>
-                          <span className="font-medium text-stone-200">{item.allTime}%</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-amber-400" />
-                          <span className="text-stone-400">Last 14 days:</span>
-                          <span className="font-medium text-stone-200">{item.twoWeek}%</span>
-                        </div>
+                        {activeKeys.map(k => (
+                          <div key={k} className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: SERIES[k].color }} />
+                            <span className="text-stone-400">{SERIES[k].label}:</span>
+                            <span className="font-medium text-stone-200">{item[k]}%</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   );
                 }}
               />
-              <Legend
-                verticalAlign="top"
-                align="right"
-                iconType="circle"
-                iconSize={8}
-                formatter={(value) => (
-                  <span style={{ color: '#78716c', fontSize: '11px' }}>
-                    {value === 'allTime' ? 'All time' : 'Last 14 days'}
-                  </span>
-                )}
-              />
-              <Bar dataKey="allTime" name="allTime" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={20} />
-              <Bar dataKey="twoWeek" name="twoWeek" fill="#fbbf24" radius={[4, 4, 0, 0]} maxBarSize={20} />
+              {activeKeys.map(k => (
+                <Bar key={k} dataKey={k} name={SERIES[k].label} fill={SERIES[k].color} radius={[4, 4, 0, 0]} maxBarSize={20} />
+              ))}
             </BarChart>
           </ResponsiveContainer>
         </div>

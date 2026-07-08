@@ -105,18 +105,32 @@ export const HABITS: Habit[] = [
     sublabel: '5 min meditation OR 10 min CBT training',
     categories: ['none'],
   },
+  {
+    id: 'workspaceWorkOnly',
+    label: 'Keep workspace entertainment-free',
+    shortLabel: 'Workspace',
+    sublabel: 'No entertainment in the work area — protect the work/play divide',
+    categories: ['highPriority'],
+    createdDate: '2026-07-08',
+  },
 ];
 
 export const HABIT_MAP = Object.fromEntries(HABITS.map(h => [h.id, h])) as Record<string, Habit>;
 
 export const HABITS_BY_CATEGORY: Record<Category, Habit[]> = {
+  highPriority: HABITS.filter(h => h.categories.includes('highPriority')),
   morning: HABITS.filter(h => h.categories.includes('morning')),
   evening: HABITS.filter(h => h.categories.includes('evening')),
   other: HABITS.filter(h => h.categories.includes('other')),
   none: HABITS.filter(h => h.categories[0] === 'none'),
 };
 
+// Categories that give one free miss, then subtract 1 for each additional miss.
 export const PRIORITY_CATEGORIES: Category[] = ['morning', 'evening', 'other'];
+
+// Categories with no free miss that subtract HIGH_PRIORITY_PENALTY_PER_MISS per miss.
+export const HIGH_PRIORITY_CATEGORIES: Category[] = ['highPriority'];
+export const HIGH_PRIORITY_PENALTY_PER_MISS = 2;
 
 export const SATURDAY_EXCLUDED_HABIT_IDS: HabitId[] = ['twoHoursDeepWork'];
 
@@ -124,6 +138,7 @@ export function getHabitsByCategoryForDate(date: string): Record<Category, Habit
   const isSaturday = parseDate(date).getDay() === 6;
   if (!isSaturday) return HABITS_BY_CATEGORY;
   return {
+    highPriority: HABITS_BY_CATEGORY.highPriority,
     morning: HABITS_BY_CATEGORY.morning,
     evening: HABITS_BY_CATEGORY.evening,
     other: HABITS_BY_CATEGORY.other.filter(h => !SATURDAY_EXCLUDED_HABIT_IDS.includes(h.id)),

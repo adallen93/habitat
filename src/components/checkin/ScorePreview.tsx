@@ -43,10 +43,15 @@ export function ScorePreview({ checked, date }: Props) {
       {/* Penalty breakdown */}
       {totalPenalty > 0 && (
         <div className="flex gap-3 text-xs">
-          {(['morning', 'evening', 'other'] as const).map(cat => (
+          {([
+            ['highPriority', 'High priority'],
+            ['morning', 'Morning'],
+            ['evening', 'Evening'],
+            ['other', 'Other'],
+          ] as const).map(([cat, label]) => (
             penalties[cat] > 0 ? (
               <span key={cat} className="text-rose-400 font-medium">
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}: -{penalties[cat]}
+                {label}: -{penalties[cat]}
               </span>
             ) : null
           ))}
