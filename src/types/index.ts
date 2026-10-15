@@ -5,7 +5,7 @@ export type HabitId =
   | 'prayers'
   | 'noEatingAfterPortion'
   | 'exercise'
-  | 'coldShowerBreathing'
+  | 'spiritualAssignment'
   | 'makeKeepCommitment'
   | 'tenMinOutside'
   | 'twoHoursDeepWork'

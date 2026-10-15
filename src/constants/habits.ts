@@ -40,10 +40,10 @@ export const HABITS: Habit[] = [
     categories: ['other'],
   },
   {
-    id: 'coldShowerBreathing',
-    label: '5 minutes of cold shower | Breathing exercises',
-    shortLabel: 'Cold shower',
-    sublabel: '5 min cold shower OR breathing exercises',
+    id: 'spiritualAssignment',
+    label: 'Fulfill a spiritual assignment',
+    shortLabel: 'Spiritual assignment',
+    sublabel: "Receive an assignment from the Lord and accomplish it",
     categories: ['other'],
   },
   {
