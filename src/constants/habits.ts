@@ -45,6 +45,7 @@ export const HABITS: Habit[] = [
     shortLabel: 'Spiritual assignment',
     sublabel: "Receive an assignment from the Lord and accomplish it",
     categories: ['other'],
+    createdDate: '2026-10-14',
   },
   {
     id: 'makeKeepCommitment',
