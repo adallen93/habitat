@@ -114,6 +114,13 @@ export const HABITS: Habit[] = [
     categories: ['highPriority'],
     createdDate: '2026-07-08',
   },
+  {
+    id: 'dateMagicActivity',
+    label: 'Date magic activity',
+    shortLabel: 'Date magic',
+    categories: ['none'],
+    createdDate: '2026-11-16',
+  },
 ];
 
 export const HABIT_MAP = Object.fromEntries(HABITS.map(h => [h.id, h])) as Record<string, Habit>;

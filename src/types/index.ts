@@ -15,7 +15,8 @@ export type HabitId =
   | 'pleasureReadingGratitude'
   | 'physicalContactConversation'
   | 'meditationCbt'
-  | 'workspaceWorkOnly';
+  | 'workspaceWorkOnly'
+  | 'dateMagicActivity';
 
 export type Category = 'highPriority' | 'morning' | 'evening' | 'other' | 'none';
 
